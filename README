@@ -1,19 +1,7 @@
-This is a simple game for two players based on the Novation Nocturn USB Controller [1]. This is a test implementation of the (not completely) reverse engineered USB protocol of the controller.
+This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux.  The protocol was reverse-engineered by felicitus (timoahummel on github). This project will (hopefully) eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. It is still very, very far from that.
 
-Game Instructions:
-- Start the python script once your Novation Nocturn is connected
-- Press any controller key to start the game
-- Goal of the game is to push the buttons on your side faster than your opponent does
-- Once you hit the right button, you get a score of +1
-- If you reach a score of 11, the round is over. The player who has the highest overall score sees his side blinking
-- If you have won 6 rounds, you win
+I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general).
 
-This is my first python program, so it is awful. No really, it is awful.
-
-
-You'll find some information about the protocol inside the code. There are some functions you can simply use in your own projects.
-
-Feel free to fork the project; as I haven't any python experience excpect for this program, I have no clue how to organize source in python correctly.
-
+De Wet van Niekerk (dewert)
 
 [1] http://www.novationmusic.com/products/midi_controller/nocturn
