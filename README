@@ -1,0 +1,7 @@
+This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux. The protocol was reverse-engineered by felicitus (timoahummel on github). This project will (hopefully) eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. It is still very, very far from that.
+
+I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general).
+
+De Wet van Niekerk (dewert)
+
+[1] http://www.novationmusic.com/products/midi_controller/nocturn 
