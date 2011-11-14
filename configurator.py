@@ -29,19 +29,22 @@ class Configurator(object):
             self.nextPage = 1
             return None
         
-        numEncoders = 9
-        #implies encoders from 0 to 8, 0 being 'speed dial'
+       
         
         nextPageData = dict()
         pageSection = 'Page{!s}'.format(self.nextPage)
         
+        defaultMode = self.config.get(pageSection,'defaultMode')
+        
+        numEncoders = 9
+        #implies encoders from 0 to 8, 0 being 'speed dial'
         encoders = []
         for i in xrange(numEncoders):
             thisEncoder = []
             try:
                 mode = self.config.get(pageSection,'Encoder{}Mode'.format(i))
             except ConfigParser.NoOptionError:
-                mode = self.config.get(pageSection,'defaultMode')
+                mode = defaultMode
                 
             thisEncoder.append(mode)
             
@@ -62,6 +65,44 @@ class Configurator(object):
             
             encoders.append(thisEncoder)
         nextPageData['encoders'] = encoders
+        
+        numButtons = 8
+        #from 0 to 7 - for now, just reading top buttons
+        buttons = []
+        for i in xrange(numButtons):
+            thisButton = []
+            try:
+                mode = self.config.get(pageSection,'Button{}Mode'.format(i+1))
+            except ConfigParser.NoOptionError:
+                mode = defaultMode
+                
+            thisButton.append(mode)
+            
+            if thisButton[0] == 'midi':
+                try:
+                    channel = self.config.get(pageSection,
+                                              'Button{}Channel'.format(i+1))
+                except ConfigParser.NoOptionError:
+                    channel = self.config.get(pageSection,'defaultChannel')
+                
+                thisButton.append(channel)
+                
+                try:
+                    controller = self.config.get(pageSection,
+                                      'Button{}Controller'.format(i+1))
+                except ConfigParser.NoOptionError:
+                    controller = 0
+                
+                thisButton.append(controller)
+            
+            else:
+                for j in range(2):
+                    thisEncoder.append(0)
+            
+            buttons.append(thisButton)
+        print buttons
+        nextPageData['buttons'] = buttons
+        
         
         self.nextPage = self.nextPage + 1
         return nextPageData

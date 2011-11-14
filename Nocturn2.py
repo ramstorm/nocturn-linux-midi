@@ -66,6 +66,7 @@ class Nocturn(object):
         self.pageContainer = PageContainer(self,configurator)
         
         self.syncPage()
+        self.resetThingies()
     
     def syncPage(self):
         page = self.pageContainer.getCurrentPage()
@@ -78,9 +79,8 @@ class Nocturn(object):
     def getList(self,type):
         if type == 'encoder':
             return self.encoderList
-        else:
-            if type == 'button':
-                return self.buttonList
+        elif type == 'button':
+            return self.buttonList
         
     def getEncoderList(self):
         return self.encoderList
@@ -100,6 +100,7 @@ class Nocturn(object):
                 # need to poll midder here
         except KeyboardInterrupt:
             print "Keyboard interrupt received, ending run..."
+            self.resetThingies()
             pass
 
    
@@ -115,6 +116,14 @@ class Nocturn(object):
     def getThingy(self, type, number):
         if type == 'encoder':
             return self.encoderList[number]
+        elif type == 'button':
+            return self.buttonList[number]
+    
+    def resetThingies(self):
+        for encoder in self.encoderList:
+            encoder.setValue(0)
+        for button in self.buttonList:
+            button.setValue(0)
         
 class Thingy(object):
     """Abstract class of physical control unit reference."""
@@ -150,9 +159,9 @@ class RotaryEncoder(Thingy):
     
     def __init__(self, surface, address, number):
         super(RotaryEncoder, self).__init__(surface, address)
-        if number > 0:
-            self.ringModeAddress = chr(self.ringModeOffset+number-1)
-            self.ringValAddress = chr(self.ringValOffset+number-1)
+        self.ringModeAddress = chr(self.ringModeOffset+number-1)
+        self.ringValAddress = chr(self.ringValOffset+number-1)
+    
     def setValue(self, val):
         super(RotaryEncoder, self).setValue(val)
         self.setRingValue(self.value)
@@ -189,8 +198,7 @@ class ToggleButton(Thingy):
 
     def __init__(self, surface, address, number):
         super(ToggleButton, self).__init__(surface,address)
-        self.LEDAddress = chr(0x70 + number)
-        self.value = 0
+        self.LEDAddress = chr(0x70 + number-1)
     # Turns button LED on or off
     # val = 0 or 1
     def setLED(self, val):
@@ -205,8 +213,8 @@ class ToggleButton(Thingy):
         self.setLED(value)
 
     def instruct(self, val):
-        if (val == type(self).pressValue):
-            self.setValue(type(self).maxValue-self.value)
+        if (val == ToggleButton.pressValue):
+            self.setValue(ToggleButton.maxValue-self.value)
         super(ToggleButton, self).instruct(self.value*ToggleButton.pressValue)
 
 class Midder(object):
@@ -299,19 +307,22 @@ class Page(object):
     
     def __init__(self,surface, pageData):
         
-        self.encoders= []
+        self.encoders = []
+        self.buttons = []
         # recall that we can count on pageData to be in order
         for i, encoder in enumerate(pageData['encoders']):
             self.encoders.append(ControlUnit(surface, encoder,
                                       surface.getThingy('encoder', i)))
+        for i, button in enumerate(pageData['buttons']):
+            self.buttons.append(ControlUnit(surface,
+                                button,surface.getThingy('button',i)))
     
     def getControlUnit(self, type, num):
         if type == 'encoder':
             return self.encoders[num]
+        elif type == 'button':
+            return self.buttons[num]
         else:
-            #~ if type == 'button':
-                #~ return self.buttons[num]
-            
             return None
     
     
@@ -321,15 +332,20 @@ class ControlUnit(object):
     
     def __init__(self, surface, cuData, physical):
         self.action = []
+        self.value = 0
         
         if cuData[0] == 'midi':
             self.action.append(MidiWriter(surface, int(cuData[1]),
                                           int(cuData[2])))
         self.physical = physical
     
+    def setValue(self, value):
+        self.value = value
+    
     def act(self, value):
         for action in self.action:
             action.act(value)
+        self.setValue(value)
 
 class CUAction(object):
     """Abstract class for action for a control unit. Would be something like a
