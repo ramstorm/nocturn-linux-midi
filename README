@@ -1,5 +1,15 @@
 This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux. The protocol was reverse-engineered by felicitus (timoahummel on github). This project will (hopefully) eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. It is still very, very far from that.
 
+The configuration file should be self explanatory.  Right now, all that can be done is setting the 8 rotary encoders to midi channels and cc's, and they will send and display values from 0 to 127 (no reception of midi events yet). Buttons are still being worked on, too.
+
+There is also an included udev rule - put it where your distro keeps udev rules.  For Arch, that is
+/etc/udev/rules.d
+The rule will put chgrp the Nocturn to "users" so make sure you are in that group.
+
+Run the Nocturn2.py script with
+	python2 Nocturn2.py
+and enjoy!
+
 I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general).
 
 De Wet van Niekerk (dewert)
