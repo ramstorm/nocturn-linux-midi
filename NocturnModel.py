@@ -38,7 +38,6 @@ class NocturnModel( object ):
         if activate:
             self.setActivePage(0)
             activate = False
-        print self.activePage
 
     def delPage( self, page ):
         pass
@@ -86,6 +85,9 @@ class NocturnModel( object ):
         theController = self.permaBar.getController( controller )
         theController.set( value )
     
+    def getPerma( self ):
+        return self.permaBar
+    
     def setAction( self, page, controller, action ):
         self.getPage( page ).getControllers()[ controller ].setAction( action )
         
@@ -116,7 +118,6 @@ class NocturnModel( object ):
                     self.hardware.setButton( cc.getNumber() + 8, val )
                 except Exception as e:
                     sys.exit(e)
-        
     
     def poll( self ):
         """Read from hardware, once. Simply returns if there is no data. Data
@@ -149,6 +150,9 @@ class ControllerCollection( object ):
         
         # List of all the controllers on the page.
         self.controllers = []
+        self.buttons = []
+        self.encoders = []
+        self.sliders = []
         
     def getSurface( self ):
         return self.surface
@@ -158,6 +162,9 @@ class ControllerCollection( object ):
 
     def getControllers( self ):
         return self.controllers
+    
+    def getButtons( self ):
+        return self.buttons
     
     def numControllers( self ):
         return len(self.controllers)
@@ -188,11 +195,7 @@ class NocturnPage( ControllerCollection ):
     def __init__( self, surface):
         super( NocturnPage, self ).__init__( surface )
         
-        # Lists of individual controller types
-        self.encoders = []
-        self.buttons = []
-        self.sliders = []
-        
+        # Lists of individual controller types        
         
         for ii in range( NocturnPage.numEncoder ):
             ee = NocturnEncoder( self,  ii)
@@ -215,9 +218,6 @@ class NocturnPage( ControllerCollection ):
         for ii in range ( 64, 72 ):
             self.hwMap[ii] = encoderIter.next()
 
-
-    def getButtons( self ):
-        return self.buttons
     
     def getEncoders( self ):
         return self.encoders
@@ -234,6 +234,7 @@ class PermaBar( ControllerCollection ):
         for ii in range( PermaBar.numButton ):
             bb = NocturnButton( self, ii)
             self.controllers.append( bb )
+            self.buttons.append( bb )
         
         buttonIter = iter(self.controllers)
         for ii in range ( 120, 128 ):

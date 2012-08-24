@@ -19,7 +19,6 @@ class Midder(object):
         self.MidiIn = pypm.Input(self.inDev)
         
     def send(self,cc, val):
-        print "midder attempting write"
         try:
             self.MidiOut.WriteShort(Midder.CC_OFFSET+self.channel,cc,val)
         except Exception as e:

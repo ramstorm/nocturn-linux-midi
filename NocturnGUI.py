@@ -51,7 +51,7 @@ class NGUIControl( wx.Control ):
     def OnMouse( self,  e ):
         """Ctrl-click or right-click will bring up a dialog about the action
         of the controller"""
-        if ( _mouseDeal( e ) ):
+        if ( self._mouseDeal( e ) ):
             return
         else:
             e.Skip()
@@ -90,7 +90,7 @@ class ButtonButton( wx.ToggleButton, NGUIControl ):
         self.controller = controller
     
     def OnMouse( self, e ):
-        if ( _mouseDeal( e ) ):
+        if ( self._mouseDeal( e ) ):
             return
         elif ( e.LeftDown() ):
             self.controller.act( 127 )
@@ -150,13 +150,16 @@ class NocturnFrame(wx.Frame):
 
         labels = [ "learn", "view", "page -", "page +",
             "user", "fx", "inst", "mixer" ]
-        
+        self.permaButtons = []
+        for ii in range( 8 ):
+            self.permaButtons.append( ButtonButton( self, -1, labels[ii] ) )
+            
         for ii in range ( 4 ):
-            sizer.Add( wx.Button(self, -1, labels[ii] ),
+            sizer.Add( self.permaButtons[ii],
                 (8,ii), (1,1), wx.EXPAND )
         
         for ii in range ( 8, 12 ):
-            sizer.Add( wx.Button(self, -1, labels[ii-4] ),
+            sizer.Add( self.permaButtons[ii-4],
                 (8,ii), (1,1), wx.EXPAND )
         
         sizer.AddGrowableRow(0)
@@ -165,6 +168,7 @@ class NocturnFrame(wx.Frame):
         
         self.Centre()
         self.Bind(wx.EVT_CLOSE, self._when_closed)
+        self.notify()
 
     def _when_closed(self, event):
         self.pollThread.stop()
@@ -176,10 +180,14 @@ class NocturnFrame(wx.Frame):
     def getButtons( self ):
         return self.buttons
     
+    def getPermaButtons( self ):
+        return self.permaButtons
+    
     def notify( self ):
         page = self.nocturn.getActivePage()
         sliders = self.getSliders()
         buttons = self.getButtons()
+        permaButtons = self.getPermaButtons()
         
         encoders = page.getEncoders()
         for ii in range( len(sliders) ):
@@ -190,8 +198,12 @@ class NocturnFrame(wx.Frame):
         for ii in range( len(buttons) ):
             buttons[ii].SetValue( nButtons[ii].getValue() )
             buttons[ii].setController( nButtons[ii] )
+        
+        pButtons = self.nocturn.getPerma().getButtons()
+        for ii in range( len(permaButtons) ):
+            permaButtons[ii].SetValue( pButtons[ii].getValue() )
+            permaButtons[ii].setController( pButtons[ii] )
 
-    
 class NocturnGUI(wx.App):
     
     def __init__( self, redirect ):
