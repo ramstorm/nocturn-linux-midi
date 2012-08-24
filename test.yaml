@@ -1,0 +1,154 @@
+# test.yaml - configuration file for nocturn-linux-midi
+# See Pag0 below for example, but basically, it goes
+# Pag{number}:
+#   {But|Enc}{number}:
+#       Action:     {MIDI|PAGE}
+#       Data:       {number}
+# PermaBar:
+#   {But|Enc|Sli}{number}:
+#       Action:     {MIDI|PAGE}
+#       Data:       {number}
+#
+# Please note that the slider (mixer) doesn't work yet, nor does the speed dial
+# Also note that MIDI codes start at 1, while this program starts everything at
+# 0, in order to be as consistent as possible. So, setting Data: 0 for a MIDI
+# action will result in your program (LMMS, Ardour etc.) receiving a CC of 1.
+#
+#########################
+Pag0:
+#########################
+  Enc0:
+    Action:     MIDI
+    Data:       0
+  Enc1:
+    Action:     MIDI
+    Data:       1
+  Enc2:
+    Action:     MIDI
+    Data:       2
+  Enc3:
+    Action:     MIDI
+    Data:       3
+  Enc4:
+    Action:     MIDI
+    Data:       4
+  Enc5:
+    Action:     MIDI
+    Data:       5
+  Enc6:
+    Action:     MIDI
+    Data:       6
+  Enc7:
+    Action:     MIDI
+    Data:       7
+#########################
+  But0:
+    Action:     MIDI
+    Data:       8
+  But1:
+    Action:     MIDI
+    Data:       9
+  But2:
+    Action:     MIDI
+    Data:       10
+  But3:
+    Action:     MIDI
+    Data:       11
+  But4:
+    Action:     MIDI
+    Data:       12
+  But5:
+    Action:     MIDI
+    Data:       13
+  But6:
+    Action:     MIDI
+    Data:       14
+  But7:
+    Action:     MIDI
+    Data:       15
+#########################
+Pag1:
+#########################
+  Enc0:
+    Action:     MIDI
+    Data:       16
+  Enc1:
+    Action:     MIDI
+    Data:       17
+  Enc2:
+    Action:     MIDI
+    Data:       18
+  Enc3:
+    Action:     MIDI
+    Data:       19
+  Enc4:
+    Action:     MIDI
+    Data:       20
+  Enc5:
+    Action:     MIDI
+    Data:       21
+  Enc6:
+    Action:     MIDI
+    Data:       22
+  Enc7:
+    Action:     MIDI
+    Data:       23
+#########################
+  But0:
+    Action:     MIDI
+    Data:       24
+  But1:
+    Action:     MIDI
+    Data:       25
+  But2:
+    Action:     MIDI
+    Data:       26
+  But3:
+    Action:     MIDI
+    Data:       27
+  But4:
+    Action:     MIDI
+    Data:       28
+  But5:
+    Action:     MIDI
+    Data:       29
+  But6:
+    Action:     MIDI
+    Data:       30
+  But7:
+    Action:     MIDI
+    Data:       31
+#########################
+#########################
+PermaBar:
+#########################
+  But0:
+    Action:     MIDI
+    Data:       32
+  But1:
+    Action:     MIDI
+    Data:       33
+  But2:
+    Action:     PAGE
+    Data:       -1
+  But3:
+    Action:     PAGE
+    Data:       1
+  But4:
+    Action:     MIDI
+    Data:       34
+  But5:
+    Action:     MIDI
+    Data:       35
+  But6:
+    Action:     MIDI
+    Data:       36
+  But7:
+    Action:     MIDI
+    Data:       37
+  Enc0:
+    Action:     MIDI
+    Data:       38
+  Sli0:
+    Action:     MIDI
+    Data:       39

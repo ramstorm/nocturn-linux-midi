@@ -1,17 +1,28 @@
-This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux. The protocol was reverse-engineered by felicitus (timoahummel on github). This project will (hopefully) eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. It is still very, very far from that.
+This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux, though it might work elsewhere. The protocol was reverse-engineered by felicitus (timoahummel on github). This project will eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. There is basic functionality now, but much is still broken. Notably broken things are:
+* the GUI, for the most part - no on-the-fly config
+* the slider (mixer) doesn't work yet
+* the speed dial doesn't work yet, because I haven't thought of what to do with it
 
-The configuration file should be self explanatory.  Right now, all that can be done is setting the 8 rotary encoders to midi channels and cc's, and they will send and display values from 0 to 127 (no reception of midi events yet). Buttons are still being worked on, too.
+Dependencies:
+* pyPortMIDI
+* pubsub
+* pyusb
+* wxPython
+* pyYAML
 
-There is also an included udev rule - put it where your distro keeps udev rules.  For Arch, that is
-/etc/udev/rules.d
-The rule will put chgrp the Nocturn to "users" so make sure you are in that group.
+The configuration file should be self explanatory.  Format is YAML. See test.yaml for an example. The GUI will prompt you to open a configuration file on running.
 
-Run the Nocturn2.py script with
-	python2 Nocturn2.py
+All MIDI saignals sent are CC's. Note actions are not supported - I've found them to be useless with the Nocturn. Let me know if this is something you need, and I'll see what I can do, or just do it yourself! Start with Midder.py, and also take a look at NocturnActions.py
+
+There is also an included udev rule - put it where your distro keeps udev rules.  For Arch, that is /etc/udev/rules.d
+The rule will chgrp the Nocturn to "users" so make sure you are in that group, or change the udev rule.
+
+Run the NocturnGUI.py script with
+	python2 NocturnGUI.py
 and enjoy!
 
-I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general).
+I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general). Advice is always appreciated.
 
-De Wet van Niekerk (dewert)
+De Wet van Niekerk (dewert) - dvan.ca - dewert@gmail.com
 
-[1] http://www.novationmusic.com/products/midi_controller/nocturn 
+[1] http://www.novationmusic.com/products/midi_controller/nocturn
