@@ -4,12 +4,9 @@
 
 #import core and util from usb for usb functions
 import usb.core
-import usb.util
 
 #standard stuff
-import array
 import sys
-import time
 import binascii
 
 class NocturnHardware( object ):
@@ -56,9 +53,10 @@ class NocturnHardware( object ):
             return
     
     def processedRead( self ):
-        data = None
         data = self.read()
-        return data[1:3] if data else data
+        if data:
+            print data[1:3]
+        return data[1:3] if data else None
 
     # Sets the LED ring mode for a specific LED ring
     # possible modes: 0 = Start from MIN value, 1 = Start from MAX value, 2 = Start from MID value, single direction, 3 = Start from MID value, both directions, 4 = Single Value, 5 = Single Value inverted
@@ -90,7 +88,7 @@ class NocturnHardware( object ):
     def setButton (self, but, val):
         
         if ((but < 0) | (but > 15)):
-            raise NameError("Button value needs inbetween 0 and 15 (0x00 and 0x0F")
+            raise NameError("Button value needs to be between 0 and 15 (0x00 and 0x0F)")
         
         if ((val == 0) | (val == 1)):
             self.write(chr(0x70 + but) + chr(val))

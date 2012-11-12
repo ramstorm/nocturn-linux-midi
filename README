@@ -1,6 +1,5 @@
 This is a basic implementation of the Novation Nocturn USB Controller [1] protocol, meant for Linux, though it might work elsewhere. The protocol was reverse-engineered by felicitus (timoahummel on github). This project will eventually allow the Nocturn to be used as a normal MIDI control surface in Linux. There is basic functionality now, but much is still broken. Notably broken things are:
 * the GUI, for the most part - no on-the-fly config
-* the slider (mixer) doesn't work yet
 * the speed dial doesn't work yet, because I haven't thought of what to do with it
 
 Dependencies:
@@ -12,7 +11,7 @@ Dependencies:
 
 The configuration file should be self explanatory.  Format is YAML. See test.yaml for an example. The GUI will prompt you to open a configuration file on running.
 
-All MIDI saignals sent are CC's. Note actions are not supported - I've found them to be useless with the Nocturn. Let me know if this is something you need, and I'll see what I can do, or just do it yourself! Start with Midder.py, and also take a look at NocturnActions.py
+All MIDI signals sent are CC's. Note actions are not supported - I've found them to be useless with the Nocturn. Let me know if this is something you need, and I'll see what I can do, or just do it yourself! Start with Midder.py, and also take a look at NocturnActions.py
 
 There is also an included udev rule - put it where your distro keeps udev rules.  For Arch, that is /etc/udev/rules.d
 The rule will chgrp the Nocturn to "users" so make sure you are in that group, or change the udev rule.
@@ -20,8 +19,6 @@ The rule will chgrp the Nocturn to "users" so make sure you are in that group, o
 Run the NocturnGUI.py script with
 	python2 NocturnGUI.py
 and enjoy!
-
-I am not experienced in Python (or programming in general), so please forgive any un-Pythonic code (or bad programming in general). Advice is always appreciated.
 
 De Wet van Niekerk (dewert) - dvan.ca - dewert@gmail.com
 

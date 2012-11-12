@@ -8,17 +8,16 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
-import sys
-import pprint
-
-from NocturnModel import *
-from NocturnActions import *
+#import pprint
+from NocturnModel import NocturnModel, NocturnPage
+from NocturnActions import PagerAction, MIDIAction
 import Midder
 
 class Configurator( object ):
     pag = 'Pag'
     but = 'But'
     enc = 'Enc'
+    sli = 'Sli'
     
     
     def __init__( self, configFile ):
@@ -29,7 +28,7 @@ class Configurator( object ):
             #~ print "File read
             #~ return
         
-        self.pp = pprint.PrettyPrinter( indent = 4 )
+        #~ self.pp = pprint.PrettyPrinter( indent = 4 )
     
     def __del__( self ):
         self.file.close()
@@ -59,10 +58,11 @@ class YAMLConfigurator( Configurator ):
     def _parseFile( self ):
         if self.file:
             data = load( self.file )
-            self.pp.pprint(data)
+            #~ self.pp.pprint(data)
             pag = Configurator.pag
             but = Configurator.but
             enc = Configurator.enc
+            sli = Configurator.sli
             ii = 0
             while ( pag + str(ii) ) in data:
                 curPage = data[ pag + str(ii) ]
@@ -91,13 +91,18 @@ class YAMLConfigurator( Configurator ):
                         self.nocturn.setPermaAction( jj,
                             self._genAction(curBut['Action'],
                                 curBut['Data']) )
-    def _genAction( self, type, data ):
+            if ( sli + str(0) ) in pb:
+                curSli = pb[ sli + str(0) ]
+                
+                self.nocturn.setPermaAction ( 8, self._genAction(curSli[ 'Action' ],
+                                                               curSli[ 'Data' ]) )
+    def _genAction( self, actType, data ):
         action = None
-        if type == 'MIDI':
+        if actType == 'MIDI':
             action = MIDIAction()
             action.setMIDICommand( data )
             action.setMidder( Midder.getMidder() )
-        elif type == 'PAGE':
+        elif actType == 'PAGE':
             action = PagerAction( data )
         return action
     

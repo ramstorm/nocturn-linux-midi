@@ -1,11 +1,8 @@
 #!/usr/bin/python2
 
-from NocturnHardware import *
+from NocturnHardware import NocturnHardware
 
-# Standard stuff to import
-import array
 import sys
-import time
 
 # Clarification of terminology:
 # surface: as in MIDI control surface - the Nocturn is an example of this
@@ -111,13 +108,13 @@ class NocturnModel( object ):
                     self.hardware.setButton( cc.getNumber(), val )
                 except Exception as e:
                     sys.exit(e)
-        for cc in self.permaBar.getControllers():
+        for cc in self.permaBar.getButtons():
             if cc.isChanged():
                 val = cc.getValue()
                 try:
                     self.hardware.setButton( cc.getNumber() + 8, val )
                 except Exception as e:
-                    sys.exit(e)
+                    print str(e)
     
     def poll( self ):
         """Read from hardware, once. Simply returns if there is no data. Data
@@ -165,6 +162,12 @@ class ControllerCollection( object ):
     
     def getButtons( self ):
         return self.buttons
+    
+    def getSliders( self ):
+        return self.sliders
+    
+    def getEncoders( self ):
+        return self.encoders
     
     def numControllers( self ):
         return len(self.controllers)
@@ -218,12 +221,6 @@ class NocturnPage( ControllerCollection ):
         for ii in range ( 64, 72 ):
             self.hwMap[ii] = encoderIter.next()
 
-    
-    def getEncoders( self ):
-        return self.encoders
-    
-    def getSliders( self ):
-        return self.sliders
 
 class PermaBar( ControllerCollection ):
     numButton = 8
@@ -239,6 +236,11 @@ class PermaBar( ControllerCollection ):
         buttonIter = iter(self.controllers)
         for ii in range ( 120, 128 ):
             self.hwMap[ii] = buttonIter.next()
+        
+        theSlider = NocturnSlider( self, PermaBar.numButton )
+        self.controllers.append( theSlider )
+        self.sliders.append( theSlider )
+        self.hwMap[72] = theSlider
 
 class NocturnController( object ):
     
@@ -320,8 +322,8 @@ class NocturnEncoder( NocturnController ):
         """Deprecated"""
         return( "Encoder " + str(self.label) )
     
-    def act( self, value, abs=False):
-        if not abs:
+    def act( self, value, absolute=False):
+        if not absolute:
             value = value if value < 64 else 0 - ( 128 - value )
             value *= NocturnEncoder.SENS
             value = self.value + value
@@ -333,6 +335,9 @@ class NocturnSlider( NocturnController ):
     
     def __init__( self, surface, label ):
         super( NocturnSlider, self ).__init__( surface, label )
+    
+#    def set( self, value ):
+#        pass
     
     def getLabel( self ):
         """Deprecated"""

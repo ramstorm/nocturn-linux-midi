@@ -6,10 +6,11 @@ import wx
 import threading
 import sys
 
-from NocturnModel import *
-from NocturnHardware import *
-from NocturnActions import *
-from Configurator import *
+#from NocturnModel import 
+from pubsub import pub
+from Configurator import YAMLConfigurator
+import Midder
+from NocturnModel import NocturnModel
 
 class GUINocturnModel( NocturnModel ):
     """Must be used with wxPython, because NocturnModel calls obs.notify()
@@ -74,16 +75,20 @@ class NGUIControl( wx.Control ):
     
 
 class EncoderSlider( wx.Slider, NGUIControl ):
-    def __init__( self, parent ):
+    def __init__( self, parent, mode=wx.SL_VERTICAL, direction=1):
+        styleCalc = (wx.SL_AUTOTICKS | mode | wx.SL_LABELS |
+                wx.SL_INVERSE) if direction == 1  else\
+                (wx.SL_AUTOTICKS | mode | wx.SL_LABELS)
         super( EncoderSlider, self ).__init__( parent, -1, 0, 0, 127,
-            style = wx.SL_AUTOTICKS | wx.SL_VERTICAL | wx.SL_LABELS | wx.SL_INVERSE )
+            style = styleCalc)
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
         self.Bind( wx.EVT_SLIDER, self.OnUpdate )
         self.controller = None
+    
 
 class ButtonButton( wx.ToggleButton, NGUIControl ):
-    def __init__(self, parent, id, label ):
-        super( ButtonButton, self ).__init__( parent, id, label )
+    def __init__(self, parent, buttonID, label ):
+        super( ButtonButton, self ).__init__( parent, buttonID, label )
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
     
     def setController( self, controller ):
@@ -101,18 +106,21 @@ class ButtonButton( wx.ToggleButton, NGUIControl ):
         return self.controller
 
 class NocturnFrame(wx.Frame):
-    def __init__(self, parent, id, title ):
+    def __init__(self, parent, frameID, title ):
         
-        wx.Frame.__init__(self, parent, id, title, wx.DefaultPosition)
+        wx.Frame.__init__(self, parent, frameID, title, wx.DefaultPosition)
         
         self.sliders = []
-        
-        fd = wx.FileDialog( None, message = "Select your configuration file..." )
-        fd.ShowModal()
-        
-        configFile = fd.GetPath()
-        print configFile
-        
+        try:
+            fd = wx.FileDialog( None, message = "Select your configuration file..." )
+            fd.ShowModal()
+            
+            configFile = fd.GetPath()
+            print configFile
+        except:
+            if self.pollThread:
+                self.pollThread.stop()
+            
         self.pollThread = PollThread( configFile )
         
         self.nocturn = self.pollThread.getNocturn()
@@ -127,9 +135,9 @@ class NocturnFrame(wx.Frame):
             sizer.Add( self.sliders[ii], (0,ii), (5,1), wx.EXPAND )
             sizer.AddGrowableCol( ii )
         
-        sizer.Add( wx.Slider(self, -1, 0, 0, 127,
-            style = wx.SL_AUTOTICKS | wx.SL_HORIZONTAL | wx.SL_LABELS ),
-            (6,4), (1,4), wx.EXPAND )
+        self.permaSliders = []
+        self.permaSliders.append(EncoderSlider( self, wx.SL_HORIZONTAL, 0))        
+        sizer.Add(self.permaSliders[0], (6,4), (1,4), wx.EXPAND)
         sizer.AddGrowableCol(4)
         
         for ii in range( 8, 12 ):
@@ -183,11 +191,15 @@ class NocturnFrame(wx.Frame):
     def getPermaButtons( self ):
         return self.permaButtons
     
+    def getPermaSliders( self ):
+        return self.permaSliders
+    
     def notify( self ):
         page = self.nocturn.getActivePage()
         sliders = self.getSliders()
         buttons = self.getButtons()
         permaButtons = self.getPermaButtons()
+        permaSliders = self.getPermaSliders()
         
         encoders = page.getEncoders()
         for ii in range( len(sliders) ):
@@ -203,6 +215,11 @@ class NocturnFrame(wx.Frame):
         for ii in range( len(permaButtons) ):
             permaButtons[ii].SetValue( pButtons[ii].getValue() )
             permaButtons[ii].setController( pButtons[ii] )
+        
+        pSliders = self.nocturn.getPerma().getSliders()
+        for ii in range( len(permaSliders) ):
+            permaSliders[ii].SetValue( pSliders[ii].getValue() )
+            permaSliders[ii].setController( pSliders[ii] )
 
 class NocturnGUI(wx.App):
     

@@ -2,6 +2,8 @@
 
 import pypm
 
+DEBUG = False
+
 class Midder(object):
     """Virtualization layer for Midi communication."""
 
@@ -20,6 +22,9 @@ class Midder(object):
         
     def send(self,cc, val):
         try:
+            if DEBUG:
+                print ("writing midi message " + str(Midder.CC_OFFSET+self.channel) + " " +
+                        str(cc) + " " + str(val))
             self.MidiOut.WriteShort(Midder.CC_OFFSET+self.channel,cc,val)
         except Exception as e:
             print type(e)

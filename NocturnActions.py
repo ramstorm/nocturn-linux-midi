@@ -2,6 +2,8 @@
 
 from pubsub import pub
 
+DEBUG = False
+
 class ChannelAction( object ):
     
     def __init__( self ):
@@ -29,13 +31,15 @@ class MIDIAction( ChannelAction ):
         self.midder = midder
     
     def execute( self, value ):
-        #~ print "Sending MIDI CC %d with value %d" % \
-            #~ ( self.MIDICommand, value )
+        if DEBUG:
+            print "Sending MIDI CC %d with value %d" % \
+                ( self.MIDICommand, value )
         self.midder.send( self.MIDICommand, value )
     
     def MIDIListener( self, channel, cc, value ):
         if cc == self.MIDICommand:
-            # print "that's me, MIDI controller", str(self.MIDICommand)
+            if DEBUG:
+                print "that's me, MIDI controller", str(self.MIDICommand)
             self.parentController.set( value )
     
     def __str__( self ):
