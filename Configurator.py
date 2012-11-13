@@ -96,6 +96,11 @@ class YAMLConfigurator( Configurator ):
                 
                 self.nocturn.setPermaAction ( 8, self._genAction(curSli[ 'Action' ],
                                                                curSli[ 'Data' ]) )
+            if ( enc + str(0) ) in pb:
+                curEnc = pb[ enc + str(0) ]
+                
+                self.nocturn.setPermaAction ( 9, self._genAction( curEnc[ 'Action' ],
+                                                                  curEnc[ 'Data' ]) )
     def _genAction( self, actType, data ):
         action = None
         if actType == 'MIDI':

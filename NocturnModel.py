@@ -4,6 +4,8 @@ from NocturnHardware import NocturnHardware
 
 import sys
 
+DEBUG = False
+
 # Clarification of terminology:
 # surface: as in MIDI control surface - the Nocturn is an example of this
 # controller: one of the knobs or buttons or the slider
@@ -101,6 +103,7 @@ class NocturnModel( object ):
                     self.hardware.setLEDRingValue( cc.getNumber(), val )
                 except Exception as e:
                     sys.exit(e)
+                cc.notifyDone()
         for cc in self.getActivePage().getButtons():
             if cc.isChanged():
                 val = cc.getValue()
@@ -108,6 +111,7 @@ class NocturnModel( object ):
                     self.hardware.setButton( cc.getNumber(), val )
                 except Exception as e:
                     sys.exit(e)
+            cc.notifyDone()
         for cc in self.permaBar.getButtons():
             if cc.isChanged():
                 val = cc.getValue()
@@ -115,6 +119,15 @@ class NocturnModel( object ):
                     self.hardware.setButton( cc.getNumber() + 8, val )
                 except Exception as e:
                     print str(e)
+            cc.notifyDone()
+        for cc in self.permaBar.getEncoders():
+            if cc.isChanged():
+                val = cc.getValue()
+                try:
+                    self.hardware.setLEDRingValue( cc.getNumber(), val )
+                except Exception as e:
+                    print str(e)
+            cc.notifyDone()
     
     def poll( self ):
         """Read from hardware, once. Simply returns if there is no data. Data
@@ -130,6 +143,8 @@ class NocturnModel( object ):
             mappedController = self.permaBar.hwMap.get( data[0] )
         if mappedController:
             mappedController.act( data[1] )
+    def disconnect( self ):
+        self.hardware.clearAll()
 
 class NocturnView( object ):
     
@@ -236,8 +251,13 @@ class PermaBar( ControllerCollection ):
         buttonIter = iter(self.controllers)
         for ii in range ( 120, 128 ):
             self.hwMap[ii] = buttonIter.next()
+            
+        theSpeedDial = NocturnEncoder( self, PermaBar.numButton )
+        self.controllers.append( theSpeedDial )
+        self.encoders.append( theSpeedDial )
+        self.hwMap[74] = theSpeedDial
         
-        theSlider = NocturnSlider( self, PermaBar.numButton )
+        theSlider = NocturnSlider( self, PermaBar.numButton + 1)
         self.controllers.append( theSlider )
         self.sliders.append( theSlider )
         self.hwMap[72] = theSlider

@@ -11,6 +11,8 @@ from pubsub import pub
 from Configurator import YAMLConfigurator
 import Midder
 from NocturnModel import NocturnModel
+from optparse import OptionParser
+
 
 class GUINocturnModel( NocturnModel ):
     """Must be used with wxPython, because NocturnModel calls obs.notify()
@@ -107,15 +109,19 @@ class ButtonButton( wx.ToggleButton, NGUIControl ):
 
 class NocturnFrame(wx.Frame):
     def __init__(self, parent, frameID, title ):
+        global options
         
         wx.Frame.__init__(self, parent, frameID, title, wx.DefaultPosition)
         
         self.sliders = []
         try:
-            fd = wx.FileDialog( None, message = "Select your configuration file..." )
-            fd.ShowModal()
-            
-            configFile = fd.GetPath()
+            if options.filename:
+                configFile = options.filename
+            else:
+                fd = wx.FileDialog( None, message = "Select your configuration file..." )
+                fd.ShowModal()
+                
+                configFile = fd.GetPath()
             print configFile
         except:
             if self.pollThread:
@@ -135,10 +141,15 @@ class NocturnFrame(wx.Frame):
             sizer.Add( self.sliders[ii], (0,ii), (5,1), wx.EXPAND )
             sizer.AddGrowableCol( ii )
         
+        self.speedDial = []
+        self.speedDial.append( EncoderSlider( self ) )
+        sizer.Add( self.speedDial[0], (0,4), (5,1), wx.EXPAND )
+        sizer.AddGrowableCol(4)
+        
         self.permaSliders = []
         self.permaSliders.append(EncoderSlider( self, wx.SL_HORIZONTAL, 0))        
         sizer.Add(self.permaSliders[0], (6,4), (1,4), wx.EXPAND)
-        sizer.AddGrowableCol(4)
+        
         
         for ii in range( 8, 12 ):
             sizer.Add( self.sliders[ii-4], (0,ii), (5,1), wx.EXPAND  )
@@ -180,6 +191,7 @@ class NocturnFrame(wx.Frame):
 
     def _when_closed(self, event):
         self.pollThread.stop()
+        self.nocturn.disconnect()
         event.Skip()
     
     def getSliders( self ):
@@ -193,6 +205,8 @@ class NocturnFrame(wx.Frame):
     
     def getPermaSliders( self ):
         return self.permaSliders
+    def getPermaEncoders( self ):
+        return self.speedDial
     
     def notify( self ):
         page = self.nocturn.getActivePage()
@@ -200,6 +214,7 @@ class NocturnFrame(wx.Frame):
         buttons = self.getButtons()
         permaButtons = self.getPermaButtons()
         permaSliders = self.getPermaSliders()
+        speedDial = self.getPermaEncoders()
         
         encoders = page.getEncoders()
         for ii in range( len(sliders) ):
@@ -221,10 +236,16 @@ class NocturnFrame(wx.Frame):
             permaSliders[ii].SetValue( pSliders[ii].getValue() )
             permaSliders[ii].setController( pSliders[ii] )
 
+        pEncoders = self.nocturn.getPerma().getEncoders()
+        for ii in range( len(speedDial) ):
+            speedDial[ii].SetValue( pEncoders[ii].getValue() )
+            speedDial[ii].setController( pEncoders[ii] )
+            
 class NocturnGUI(wx.App):
     
     def __init__( self, redirect ):
         super( NocturnGUI, self ).__init__(redirect)
+        self.options = options
 
     
     def OnInit( self ):
@@ -278,5 +299,9 @@ class PollThread( threading.Thread ):
 
 
 if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-f", "--file", dest="filename",
+                      help="configuration file", metavar="FILE")
+    (options, args) = parser.parse_args()
     app = NocturnGUI( 0 )
     app.MainLoop()

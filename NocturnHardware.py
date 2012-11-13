@@ -9,6 +9,8 @@ import usb.core
 import sys
 import binascii
 
+DEBUG = False
+
 class NocturnHardware( object ):
     
     vendorID = 0x1235
@@ -54,7 +56,7 @@ class NocturnHardware( object ):
     
     def processedRead( self ):
         data = self.read()
-        if data:
+        if data and DEBUG:
             print data[1:3]
         return data[1:3] if data else None
 
@@ -62,8 +64,8 @@ class NocturnHardware( object ):
     # possible modes: 0 = Start from MIN value, 1 = Start from MAX value, 2 = Start from MID value, single direction, 3 = Start from MID value, both directions, 4 = Single Value, 5 = Single Value inverted
     # The center LED ring can't be set to a mode (or I haven't found out how)
     def setLEDRingMode (self, ring, mode):
-        if ((ring > 7) | (ring < 0)):
-            raise NameError("The LED ring needs to be between 0 and 7")
+        if ((ring > 8) | (ring < 0)):
+            raise NameError("The LED ring needs to be between 0 and 8")
         
         if ((mode < 0) | (mode > 5)):
             raise NameError("The mode needs to be between 0 and 5")
@@ -80,7 +82,10 @@ class NocturnHardware( object ):
         if ((value < 0) | (value > 127)):
             raise NameError("The LED ring value needs to be between 0 and 127")
         
-        self.write(chr(0x40+ring) + chr(value))
+        if ring == 8:
+            self.write( chr(0x50) + chr(value))
+        else:
+            self.write(chr(0x40+ring) + chr(value))
         
     # Turns a button LED on or off
     # button = 0-16
@@ -99,6 +104,20 @@ class NocturnHardware( object ):
     def clearAll ( self ):
         for bb in range( 16 ):
             self.setButton( bb, 0 )
-        for ll in range( 7 ):
+        for ll in range( 9 ):
             self.setLEDRingMode( ll, 0 )
             self.setLEDRingValue( ll, 0 )
+
+if __name__ == "__main__":
+    nh = NocturnHardware()
+    nh.clearAll()
+    nh.setLEDRingMode(8, 0)
+    #for ii in range(1):
+    nh.setLEDRingValue(8, 127)
+    try:
+        while True:
+            value = nh.processedRead()
+            if value != None:
+                print nh.processedRead()
+    except KeyboardInterrupt as e:
+        sys.exit(e)
