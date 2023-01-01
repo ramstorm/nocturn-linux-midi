@@ -1,5 +1,6 @@
 #!/usr/bin/python2
 
+#from pubsub import publish as pub
 from pubsub import pub
 
 DEBUG = False

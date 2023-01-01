@@ -23,10 +23,14 @@ class NocturnHardware( object ):
 
     def __init__( self ):
         dev = usb.core.find(idVendor=self.vendorID, idProduct=self.productID)
-            
+
         if dev is None:
             raise ValueError('Device not found')
             sys.exit()
+
+#        ep = dev[0].interfaces()[5].endpoints()[0]
+#        i = dev[0].interfaces()[5].bInterfaceNumber
+        i = dev[0].interfaces()[0].bInterfaceNumber
 
         cfg = dev[1]
         intf = cfg[(0,0)]
@@ -34,6 +38,12 @@ class NocturnHardware( object ):
         self.ep = intf[1]
         self.ep2 = intf[0]
         
+        if dev.is_kernel_driver_active(i):
+            try:
+                dev.detach_kernel_driver(i)
+            except usb.core.USBError as e:
+                sys.exit("Could not detatch kernel driver from interface({0}): {1}".format(i, str(e)))
+
         try:
             dev.set_configuration()
             print "USB acquired: ", dev

@@ -1,6 +1,9 @@
 #!/usr/bin/python2
 
-import pypm
+try:
+    import pypm
+except ImportError:
+    from pygame import pypm
 
 DEBUG = False
 

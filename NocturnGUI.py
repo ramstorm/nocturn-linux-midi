@@ -7,6 +7,7 @@ import threading
 import sys
 
 #from NocturnModel import 
+#from pubsub import publish as pub
 from pubsub import pub
 from Configurator import YAMLConfigurator
 import Midder
@@ -76,19 +77,42 @@ class NGUIControl( wx.Control ):
         return False
     
 
-class EncoderSlider( wx.Slider, NGUIControl ):
+class EncoderSlider( wx.Slider ):
     def __init__( self, parent, mode=wx.SL_VERTICAL, direction=1):
         styleCalc = (wx.SL_AUTOTICKS | mode | wx.SL_LABELS |
                 wx.SL_INVERSE) if direction == 1  else\
                 (wx.SL_AUTOTICKS | mode | wx.SL_LABELS)
-        super( EncoderSlider, self ).__init__( parent, -1, 0, 0, 127,
-            style = styleCalc)
+        super( EncoderSlider, self ).__init__( parent, -1, 0, 0, 127, style = styleCalc)
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
         self.Bind( wx.EVT_SLIDER, self.OnUpdate )
         self.controller = None
+
+    def OnMouse( self,  e ):
+        """Ctrl-click or right-click will bring up a dialog about the action
+        of the controller"""
+        if ( self._mouseDeal( e ) ):
+            return
+        else:
+            e.Skip()
+
+    def OnUpdate( self, event=None ):
+        self.controller.act( self.GetValue(), True )
+
+    def setController( self, controller ):
+        self.controller = controller
+
+    def getController( self ):
+        return self.controller
+
+    def _mouseDeal( self, e ):
+        if ( e.CmdDown() and e.LeftDown() ) or e.RightDown():
+            aw = ControllerActionWindow( self, self.getController() )
+            aw.ShowModal()
+            return True
+        return False
     
 
-class ButtonButton( wx.ToggleButton, NGUIControl ):
+class ButtonButton( wx.ToggleButton ):
     def __init__(self, parent, buttonID, label ):
         super( ButtonButton, self ).__init__( parent, buttonID, label )
         self.Bind( wx.EVT_MOUSE_EVENTS, self.OnMouse )
@@ -106,6 +130,17 @@ class ButtonButton( wx.ToggleButton, NGUIControl ):
     
     def getController( self ):
         return self.controller
+
+    def OnUpdate( self, event=None ):
+        self.controller.act( self.GetValue(), True )
+
+    def _mouseDeal( self, e ):
+        if ( e.CmdDown() and e.LeftDown() ) or e.RightDown():
+            aw = ControllerActionWindow( self, self.getController() )
+            aw.ShowModal()
+            return True
+        return False
+
 
 class NocturnFrame(wx.Frame):
     def __init__(self, parent, frameID, title ):
