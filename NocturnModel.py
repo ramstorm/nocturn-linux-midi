@@ -324,9 +324,10 @@ class NocturnButton( NocturnController ):
         super( NocturnButton, self ).set( value )
     
     def act( self, value ):
-        if value != 0:
-            value = 0 if self.value == 1 else 127
-            super( NocturnButton, self).act( value )
+        #print ("Button act " + str(value))
+        #if value != 0:
+        #    value = 0 if self.value == 1 else 127
+        super( NocturnButton, self).act( value )
     
 class NocturnEncoder( NocturnController ):
     

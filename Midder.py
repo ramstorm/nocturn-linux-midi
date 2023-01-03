@@ -10,6 +10,8 @@ DEBUG = False
 class Midder(object):
     """Virtualization layer for Midi communication."""
 
+    NOTE_OFF_OFFSET = 0x80
+    NOTE_ON_OFFSET = 0x90
     CC_OFFSET = 0xb0
     
     def __init__(self, inDev, outDev, latency=5, channel=0):
@@ -23,12 +25,15 @@ class Midder(object):
         self.MidiOut = pypm.Output(self.outDev,self.latency)
         self.MidiIn = pypm.Input(self.inDev)
         
-    def send(self,cc, val):
+    def send(self, cc, msg, val):
         try:
+            offset = Midder.CC_OFFSET
+            if msg == 'NOTE':
+                offset = Midder.NOTE_ON_OFFSET if val > 0 else Midder.NOTE_OFF_OFFSET
             if DEBUG:
-                print ("writing midi message " + str(Midder.CC_OFFSET+self.channel) + " " +
+                print ("writing midi message " + str(offset+self.channel) + " " +
                         str(cc) + " " + str(val))
-            self.MidiOut.WriteShort(Midder.CC_OFFSET+self.channel,cc,val)
+            self.MidiOut.WriteShort(offset+self.channel,cc,val)
         except Exception as e:
             print type(e)
             print e.args

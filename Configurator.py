@@ -103,8 +103,9 @@ class YAMLConfigurator( Configurator ):
                                                                   curEnc[ 'Data' ]) )
     def _genAction( self, actType, data ):
         action = None
-        if actType == 'MIDI':
+        if actType == 'MIDI' or actType == 'MIDI-NOTE':
             action = MIDIAction()
+            action.setMIDIMessage( 'NOTE' if actType == 'MIDI-NOTE' else 'CC' )
             action.setMIDICommand( data )
             action.setMidder( Midder.getMidder() )
         elif actType == 'PAGE':

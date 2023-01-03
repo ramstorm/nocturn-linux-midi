@@ -21,13 +21,17 @@ class MIDIAction( ChannelAction ):
     def __init__( self ):
         super( MIDIAction, self ).__init__( )
         self.MIDIChannel = 0
+        self.MIDIMessage = 'CC'
         self.MIDICommand = 0
         self.midder = None
         pub.subscribe(self.MIDIListener, 'MIDI_IN_MESSAGES')
     
     def setMIDICommand( self, CC ):
         self.MIDICommand = CC
-    
+
+    def setMIDIMessage( self, msg ):
+        self.MIDIMessage = msg
+
     def setMidder( self, midder ):
         self.midder = midder
     
@@ -35,7 +39,7 @@ class MIDIAction( ChannelAction ):
         if DEBUG:
             print "Sending MIDI CC %d with value %d" % \
                 ( self.MIDICommand, value )
-        self.midder.send( self.MIDICommand, value )
+        self.midder.send( self.MIDICommand, self.MIDIMessage, value )
     
     def MIDIListener( self, channel, cc, value ):
         if cc == self.MIDICommand:

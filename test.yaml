@@ -95,29 +95,29 @@ Pag1:
     Data:       23
 #########################
   But0:
-    Action:     MIDI
-    Data:       24
+    Action:     MIDI-NOTE
+    Data:       4
   But1:
-    Action:     MIDI
-    Data:       25
+    Action:     MIDI-NOTE
+    Data:       7
   But2:
-    Action:     MIDI
-    Data:       26
+    Action:     MIDI-NOTE
+    Data:       6
   But3:
-    Action:     MIDI
-    Data:       27
+    Action:     MIDI-NOTE
+    Data:       5
   But4:
-    Action:     MIDI
-    Data:       28
+    Action:     MIDI-NOTE
+    Data:       1
   But5:
-    Action:     MIDI
-    Data:       29
+    Action:     MIDI-NOTE
+    Data:       0
   But6:
-    Action:     MIDI
-    Data:       30
+    Action:     MIDI-NOTE
+    Data:       3
   But7:
-    Action:     MIDI
-    Data:       31
+    Action:     MIDI-NOTE
+    Data:       2
 #########################
 #########################
 PermaBar:
