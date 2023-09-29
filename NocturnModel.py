@@ -3,6 +3,7 @@
 from NocturnHardware import NocturnHardware
 
 import sys
+import time
 
 DEBUG = False
 
@@ -334,9 +335,12 @@ class NocturnEncoder( NocturnController ):
     # The sensitivity. Would probably be weird to change it, since degrees of
     # rotation should equal degrees of lit LEDs, but go nuts!
     SENS = 3
-    
-    
+    DEBOUNCE_TIME_MS = 50
+
     def __init__( self, surface, label ):
+        self.last = 0
+        self.last_time = 0
+        self.direction = 1
         super( NocturnEncoder, self ).__init__( surface, label )
     
     def getLabel( self ):
@@ -350,7 +354,14 @@ class NocturnEncoder( NocturnController ):
             value = self.value + value
             value = 0 if value < 0 else value
             value = 127 if value > 127 else value
-        super( NocturnEncoder, self ).act( value )
+
+        current_time_ms = int(round(time.time() * 1000))
+        if current_time_ms > (self.last_time + NocturnEncoder.DEBOUNCE_TIME_MS):
+            self.direction = value - self.last
+        if self.direction > 0 and value > self.last or self.direction < 0 and value < self.last:
+            self.last = value
+            self.last_time = current_time_ms
+            super( NocturnEncoder, self ).act( value )
 
 class NocturnSlider( NocturnController ):
     
