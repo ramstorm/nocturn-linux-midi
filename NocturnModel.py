@@ -334,7 +334,10 @@ class NocturnEncoder( NocturnController ):
     
     # The sensitivity. Would probably be weird to change it, since degrees of
     # rotation should equal degrees of lit LEDs, but go nuts!
-    SENS = 3
+    ACCELERATION_LOW = 2
+    ACCELERATION_HIGH = 3
+    ACCELERATION_LOW_TIME_MS = 65
+    ACCELERATION_HIGH_TIME_MS = 50
     DEBOUNCE_TIME_MS = 50
 
     def __init__( self, surface, label ):
@@ -349,19 +352,26 @@ class NocturnEncoder( NocturnController ):
     
     def act( self, value, absolute=False):
         if not absolute:
+            current_time_ms = int(round(time.time() * 1000))
             value = value if value < 64 else 0 - ( 128 - value )
-            value *= NocturnEncoder.SENS
+            # Acceleration
+            if current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_HIGH_TIME_MS):
+                value *= NocturnEncoder.ACCELERATION_HIGH
+            elif current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_LOW_TIME_MS):
+                value *= NocturnEncoder.ACCELERATION_LOW
             value = self.value + value
             value = 0 if value < 0 else value
             value = 127 if value > 127 else value
 
-        current_time_ms = int(round(time.time() * 1000))
-        if current_time_ms > (self.last_time + NocturnEncoder.DEBOUNCE_TIME_MS):
-            self.direction = value - self.last
-        if self.direction > 0 and value > self.last or self.direction < 0 and value < self.last:
-            self.last = value
-            self.last_time = current_time_ms
-            super( NocturnEncoder, self ).act( value )
+            # Debouncing
+            if current_time_ms > (self.last_time + NocturnEncoder.DEBOUNCE_TIME_MS):
+                self.direction = value - self.last
+            if self.direction > 0 and value > self.last or self.direction < 0 and value < self.last:
+                self.last = value
+                self.last_time = current_time_ms
+                super( NocturnEncoder, self ).act( value )
+        else:
+                super( NocturnEncoder, self ).act( value )
 
 class NocturnSlider( NocturnController ):
     
