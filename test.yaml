@@ -19,58 +19,6 @@ Pag0:
 #########################
   Enc0:
     Action:     MIDI
-    Data:       0
-  Enc1:
-    Action:     MIDI
-    Data:       1
-  Enc2:
-    Action:     MIDI
-    Data:       2
-  Enc3:
-    Action:     MIDI
-    Data:       3
-  Enc4:
-    Action:     MIDI
-    Data:       4
-  Enc5:
-    Action:     MIDI
-    Data:       5
-  Enc6:
-    Action:     MIDI
-    Data:       6
-  Enc7:
-    Action:     MIDI
-    Data:       7
-#########################
-  But0:
-    Action:     MIDI
-    Data:       8
-  But1:
-    Action:     MIDI
-    Data:       9
-  But2:
-    Action:     MIDI
-    Data:       10
-  But3:
-    Action:     MIDI
-    Data:       11
-  But4:
-    Action:     MIDI
-    Data:       12
-  But5:
-    Action:     MIDI
-    Data:       13
-  But6:
-    Action:     MIDI
-    Data:       14
-  But7:
-    Action:     MIDI
-    Data:       15
-#########################
-Pag1:
-#########################
-  Enc0:
-    Action:     MIDI
     Data:       16
   Enc1:
     Action:     MIDI
@@ -96,59 +44,67 @@ Pag1:
 #########################
   But0:
     Action:     MIDI-NOTE
-    Data:       4
+    Data:       47
   But1:
     Action:     MIDI-NOTE
-    Data:       7
+    Data:       50
   But2:
     Action:     MIDI-NOTE
-    Data:       6
+    Data:       53
   But3:
     Action:     MIDI-NOTE
-    Data:       5
+    Data:       56
   But4:
     Action:     MIDI-NOTE
-    Data:       1
+    Data:       59
   But5:
     Action:     MIDI-NOTE
-    Data:       0
+    Data:       62
   But6:
     Action:     MIDI-NOTE
-    Data:       3
+    Data:       65
   But7:
     Action:     MIDI-NOTE
-    Data:       2
+    Data:       69
 #########################
 #########################
 PermaBar:
 #########################
   But0:
-    Action:     MIDI
-    Data:       32
+    Action:     MIDI-NOTE
+    Data:       45
   But1:
-    Action:     MIDI
-    Data:       33
+    Action:     MIDI-NOTE
+    Data:       48
   But2:
-    Action:     PAGE
-    Data:       -1
+    Action:     MIDI-NOTE
+    Data:       52
   But3:
-    Action:     PAGE
-    Data:       1
+    Action:     MIDI-NOTE
+    Data:       55
   But4:
-    Action:     MIDI
-    Data:       34
+    Action:     MIDI-NOTE
+    Data:       57
   But5:
-    Action:     MIDI
-    Data:       35
+    Action:     MIDI-NOTE
+    Data:       60
   But6:
-    Action:     MIDI
-    Data:       36
+    Action:     MIDI-NOTE
+    Data:       64
   But7:
-    Action:     MIDI
-    Data:       37
+    Action:     MIDI-NOTE
+    Data:       67
   Enc0:
     Action:     MIDI
-    Data:       38
+    Data:       24
   Sli0:
     Action:     MIDI
-    Data:       39
+    Data:       25
+
+
+#  But2:
+#    Action:     PAGE
+#    Data:       -1
+#  But3:
+#    Action:     PAGE
+#    Data:       1
