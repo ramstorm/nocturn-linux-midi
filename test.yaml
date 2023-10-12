@@ -64,9 +64,380 @@ Pag0:
     Action:     MIDI-NOTE
     Data:       65
   But7:
-    Action:     MIDI-NOTE
-    Data:       69
+    Action:     PAGE
+    Data:       1
 #########################
+#########################
+Pag1:
+#########################
+  Enc0:
+    Action:     MIDI
+    Data:       24
+  Enc1:
+    Action:     MIDI
+    Data:       25
+  Enc2:
+    Action:     MIDI
+    Data:       26
+  Enc3:
+    Action:     MIDI
+    Data:       27
+  Enc4:
+    Action:     MIDI
+    Data:       28
+  Enc5:
+    Action:     MIDI
+    Data:       29
+  Enc6:
+    Action:     MIDI
+    Data:       30
+  Enc7:
+    Action:     MIDI
+    Data:       31
+#########################
+  But0:
+    Action:     MIDI-NOTE
+    Data:       47
+  But1:
+    Action:     MIDI-NOTE
+    Data:       50
+  But2:
+    Action:     MIDI-NOTE
+    Data:       53
+  But3:
+    Action:     MIDI-NOTE
+    Data:       56
+  But4:
+    Action:     MIDI-NOTE
+    Data:       59
+  But5:
+    Action:     MIDI-NOTE
+    Data:       62
+  But6:
+    Action:     MIDI-NOTE
+    Data:       65
+  But7:
+    Action:     PAGE
+    Data:       1
+#########################
+#########################
+Pag2:
+#########################
+  Enc0:
+    Action:     MIDI
+    Data:       32
+  Enc1:
+    Action:     MIDI
+    Data:       33
+  Enc2:
+    Action:     MIDI
+    Data:       34
+  Enc3:
+    Action:     MIDI
+    Data:       35
+  Enc4:
+    Action:     MIDI
+    Data:       36
+  Enc5:
+    Action:     MIDI
+    Data:       37
+  Enc6:
+    Action:     MIDI
+    Data:       38
+  Enc7:
+    Action:     MIDI
+    Data:       39
+#########################
+  But0:
+    Action:     MIDI-NOTE
+    Data:       47
+  But1:
+    Action:     MIDI-NOTE
+    Data:       50
+  But2:
+    Action:     MIDI-NOTE
+    Data:       53
+  But3:
+    Action:     MIDI-NOTE
+    Data:       56
+  But4:
+    Action:     MIDI-NOTE
+    Data:       59
+  But5:
+    Action:     MIDI-NOTE
+    Data:       62
+  But6:
+    Action:     MIDI-NOTE
+    Data:       65
+  But7:
+    Action:     PAGE
+    Data:       1
+#########################
+#########################
+Pag3:
+#########################
+  Enc0:
+    Action:     MIDI
+    Data:       40
+  Enc1:
+    Action:     MIDI
+    Data:       41
+  Enc2:
+    Action:     MIDI
+    Data:       42
+  Enc3:
+    Action:     MIDI
+    Data:       43
+  Enc4:
+    Action:     MIDI
+    Data:       44
+  Enc5:
+    Action:     MIDI
+    Data:       45
+  Enc6:
+    Action:     MIDI
+    Data:       46
+  Enc7:
+    Action:     MIDI
+    Data:       47
+#########################
+  But0:
+    Action:     MIDI-NOTE
+    Data:       47
+  But1:
+    Action:     MIDI-NOTE
+    Data:       50
+  But2:
+    Action:     MIDI-NOTE
+    Data:       53
+  But3:
+    Action:     MIDI-NOTE
+    Data:       56
+  But4:
+    Action:     MIDI-NOTE
+    Data:       59
+  But5:
+    Action:     MIDI-NOTE
+    Data:       62
+  But6:
+    Action:     MIDI-NOTE
+    Data:       65
+  But7:
+    Action:     PAGE
+    Data:       1
+#########################
+##########################
+#Pag4:
+##########################
+#  Enc0:
+#    Action:     MIDI
+#    Data:       48
+#  Enc1:
+#    Action:     MIDI
+#    Data:       49
+#  Enc2:
+#    Action:     MIDI
+#    Data:       50
+#  Enc3:
+#    Action:     MIDI
+#    Data:       51
+#  Enc4:
+#    Action:     MIDI
+#    Data:       52
+#  Enc5:
+#    Action:     MIDI
+#    Data:       53
+#  Enc6:
+#    Action:     MIDI
+#    Data:       54
+#  Enc7:
+#    Action:     MIDI
+#    Data:       55
+##########################
+#  But0:
+#    Action:     MIDI-NOTE
+#    Data:       47
+#  But1:
+#    Action:     MIDI-NOTE
+#    Data:       50
+#  But2:
+#    Action:     MIDI-NOTE
+#    Data:       53
+#  But3:
+#    Action:     MIDI-NOTE
+#    Data:       56
+#  But4:
+#    Action:     MIDI-NOTE
+#    Data:       59
+#  But5:
+#    Action:     MIDI-NOTE
+#    Data:       62
+#  But6:
+#    Action:     MIDI-NOTE
+#    Data:       65
+#  But7:
+#    Action:     PAGE
+#    Data:       1
+##########################
+##########################
+#Pag5:
+##########################
+#  Enc0:
+#    Action:     MIDI
+#    Data:       56
+#  Enc1:
+#    Action:     MIDI
+#    Data:       57
+#  Enc2:
+#    Action:     MIDI
+#    Data:       58
+#  Enc3:
+#    Action:     MIDI
+#    Data:       59
+#  Enc4:
+#    Action:     MIDI
+#    Data:       60
+#  Enc5:
+#    Action:     MIDI
+#    Data:       61
+#  Enc6:
+#    Action:     MIDI
+#    Data:       62
+#  Enc7:
+#    Action:     MIDI
+#    Data:       63
+##########################
+#  But0:
+#    Action:     MIDI-NOTE
+#    Data:       47
+#  But1:
+#    Action:     MIDI-NOTE
+#    Data:       50
+#  But2:
+#    Action:     MIDI-NOTE
+#    Data:       53
+#  But3:
+#    Action:     MIDI-NOTE
+#    Data:       56
+#  But4:
+#    Action:     MIDI-NOTE
+#    Data:       59
+#  But5:
+#    Action:     MIDI-NOTE
+#    Data:       62
+#  But6:
+#    Action:     MIDI-NOTE
+#    Data:       65
+#  But7:
+#    Action:     PAGE
+#    Data:       1
+##########################
+##########################
+#Pag6:
+##########################
+#  Enc0:
+#    Action:     MIDI
+#    Data:       64
+#  Enc1:
+#    Action:     MIDI
+#    Data:       65
+#  Enc2:
+#    Action:     MIDI
+#    Data:       66
+#  Enc3:
+#    Action:     MIDI
+#    Data:       67
+#  Enc4:
+#    Action:     MIDI
+#    Data:       68
+#  Enc5:
+#    Action:     MIDI
+#    Data:       69
+#  Enc6:
+#    Action:     MIDI
+#    Data:       70
+#  Enc7:
+#    Action:     MIDI
+#    Data:       71
+##########################
+#  But0:
+#    Action:     MIDI-NOTE
+#    Data:       47
+#  But1:
+#    Action:     MIDI-NOTE
+#    Data:       50
+#  But2:
+#    Action:     MIDI-NOTE
+#    Data:       53
+#  But3:
+#    Action:     MIDI-NOTE
+#    Data:       56
+#  But4:
+#    Action:     MIDI-NOTE
+#    Data:       59
+#  But5:
+#    Action:     MIDI-NOTE
+#    Data:       62
+#  But6:
+#    Action:     MIDI-NOTE
+#    Data:       65
+#  But7:
+#    Action:     PAGE
+#    Data:       1
+##########################
+##########################
+#Pag7:
+##########################
+#  Enc0:
+#    Action:     MIDI
+#    Data:       72
+#  Enc1:
+#    Action:     MIDI
+#    Data:       73
+#  Enc2:
+#    Action:     MIDI
+#    Data:       74
+#  Enc3:
+#    Action:     MIDI
+#    Data:       75
+#  Enc4:
+#    Action:     MIDI
+#    Data:       76
+#  Enc5:
+#    Action:     MIDI
+#    Data:       77
+#  Enc6:
+#    Action:     MIDI
+#    Data:       78
+#  Enc7:
+#    Action:     MIDI
+#    Data:       79
+##########################
+#  But0:
+#    Action:     MIDI-NOTE
+#    Data:       47
+#  But1:
+#    Action:     MIDI-NOTE
+#    Data:       50
+#  But2:
+#    Action:     MIDI-NOTE
+#    Data:       53
+#  But3:
+#    Action:     MIDI-NOTE
+#    Data:       56
+#  But4:
+#    Action:     MIDI-NOTE
+#    Data:       59
+#  But5:
+#    Action:     MIDI-NOTE
+#    Data:       62
+#  But6:
+#    Action:     MIDI-NOTE
+#    Data:       65
+#  But7:
+#    Action:     PAGE
+#    Data:       1
+##########################
 #########################
 PermaBar:
 #########################
@@ -92,19 +463,12 @@ PermaBar:
     Action:     MIDI-NOTE
     Data:       64
   But7:
-    Action:     MIDI-NOTE
-    Data:       67
+    Action:     PAGE
+    Data:       -1
   Enc0:
     Action:     MIDI
-    Data:       24
+    Data:       80
   Sli0:
     Action:     MIDI
-    Data:       25
+    Data:       81
 
-
-#  But2:
-#    Action:     PAGE
-#    Data:       -1
-#  But3:
-#    Action:     PAGE
-#    Data:       1
