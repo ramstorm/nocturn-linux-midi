@@ -59,6 +59,9 @@ class PagerAction( ChannelAction ):
         PagerAction.pagerActions.append( self )
     
     def execute( self, value ):
+        if value == 0:
+            return # ignore button release
+
         surface = self.parentController.getPage().getSurface()
         surface.incPage( self.inc )
         
