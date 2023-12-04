@@ -1,6 +1,5 @@
 #!/usr/bin/python2
 
-#from pubsub import publish as pub
 from pubsub import pub
 
 DEBUG = False
@@ -24,7 +23,6 @@ class MIDIAction( ChannelAction ):
         self.MIDIMessage = 'CC'
         self.MIDICommand = 0
         self.midder = None
-        pub.subscribe(self.MIDIListener, 'MIDI_IN_MESSAGES')
     
     def setMIDICommand( self, CC ):
         self.MIDICommand = CC
@@ -40,6 +38,7 @@ class MIDIAction( ChannelAction ):
             print "Sending MIDI CC %d with value %d" % \
                 ( self.MIDICommand, value )
         self.midder.send( self.MIDICommand, self.MIDIMessage, value )
+        self.parentController.set( value )
     
     def MIDIListener( self, channel, cc, value ):
         if cc == self.MIDICommand:

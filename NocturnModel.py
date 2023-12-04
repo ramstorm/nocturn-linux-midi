@@ -6,6 +6,11 @@ import sys
 import time
 
 DEBUG = False
+hardware = None
+last_encoder_number = 0
+last_encoder_value = 0
+last_encoder_time_ms = 0
+enc = {}
 
 # Clarification of terminology:
 # surface: as in MIDI control surface - the Nocturn is an example of this
@@ -22,12 +27,14 @@ class NocturnModel( object ):
     # the state of its controllers.
     
     def __init__( self ):
+        global hardware
         # The list of virtual pages of controllers
         # Pages are instances of the NocturnPage class
         self.pages = []
         self.observers = []
-        self.activePage = None
-        self.hardware = NocturnHardware()
+        self.activePage = 0
+        self.lastPage = 7
+        hardware = NocturnHardware()
         self.permaBar = PermaBar( self )
         
     def addPage( self, page ):
@@ -44,9 +51,11 @@ class NocturnModel( object ):
     
     def incPage( self, inc ):
         """Increments the active page by inc"""
+        global enc
         page = self.activePage + inc
         if page < len( self.pages ) and page >= 0:
             self.setActivePage( page )
+            enc.clear()
         return ( self.activePage == len( self.pages ) - 1 )
     
     def getPage( self, page ):
@@ -57,6 +66,7 @@ class NocturnModel( object ):
         return self.pages[self.activePage]
             
     def setActivePage( self, page ):
+        self.lastPage = self.activePage
         self.activePage = page
         self.getActivePage().setAllChanged()
         self.notifyObservers()
@@ -95,46 +105,35 @@ class NocturnModel( object ):
         self.permaBar.getControllers()[ perma ].setAction( action )
     
     def update( self ):
+        global hardware
         """Updates the hardware lights with stored values, but only sends
         codes if NocturnController.isChanged()"""
         for cc in self.getActivePage().getEncoders():
             if cc.isChanged():
                 val = cc.getValue()
                 try:
-                    self.hardware.setLEDRingValue( cc.getNumber(), val )
+                    hardware.setLEDRingValue( cc.getNumber(), val )
                 except Exception as e:
                     sys.exit(e)
                 cc.notifyDone()
-        for cc in self.getActivePage().getButtons():
-            if cc.isChanged():
-                val = cc.getValue()
-                try:
-                    self.hardware.setButton( cc.getNumber(), val )
-                except Exception as e:
-                    sys.exit(e)
-            cc.notifyDone()
-        for cc in self.permaBar.getButtons():
-            if cc.isChanged():
-                val = cc.getValue()
-                try:
-                    self.hardware.setButton( cc.getNumber() + 8, val )
-                except Exception as e:
-                    print str(e)
-            cc.notifyDone()
+        # Show current page via button LEDs
+        hardware.setButton( self.lastPage, 0 )
+        hardware.setButton( self.activePage, 1 )
         for cc in self.permaBar.getEncoders():
             if cc.isChanged():
                 val = cc.getValue()
                 try:
-                    self.hardware.setLEDRingValue( cc.getNumber(), val )
+                    hardware.setLEDRingValue( cc.getNumber(), val )
                 except Exception as e:
                     print str(e)
             cc.notifyDone()
     
     def poll( self ):
+        global hardware
         """Read from hardware, once. Simply returns if there is no data. Data
         truncated to one message. If messages are piling up, you're doing it
         wrong."""
-        data = self.hardware.processedRead()
+        data = hardware.processedRead()
         if data is None:
             return
         mappedController = self.getActivePage().hwMap.get( data[0] )
@@ -145,7 +144,22 @@ class NocturnModel( object ):
         if mappedController:
             mappedController.act( data[1] )
     def disconnect( self ):
-        self.hardware.clearAll()
+        global hardware
+        hardware.clearAll()
+    def led( self ):
+        global hardware
+        global enc
+        global last_encoder_time_ms
+        LED_FILTER_TIME_MS = 250
+        current_time_ms = int(round(time.time() * 1000))
+        if current_time_ms > (last_encoder_time_ms + LED_FILTER_TIME_MS):
+            for key in enc:
+                hardware.setLEDRingValue( key, enc[key] )
+                last_encoder_time_ms = current_time_ms
+                del enc[key]
+                # Break after one entry, the rest are handled in subsequent iterations of the main loop
+                break
+
 
 class NocturnView( object ):
     
@@ -264,18 +278,17 @@ class PermaBar( ControllerCollection ):
         self.hwMap[72] = theSlider
 
 class NocturnController( object ):
-    
+
     def __init__( self, page, label ):
         self.value = 0
         self.page = page
         self.label = label
         self.changed = False
-    
+
     def set( self, value ):
         self.value = value
         self.changed = True
-        self.page.notifyObservers()
-    
+
     def increment( self, value ):
         self.set(self.value + value)
     
@@ -323,27 +336,26 @@ class NocturnButton( NocturnController ):
     def set( self, value ):
         value = 1 if value == 127 or value == 1 else 0
         super( NocturnButton, self ).set( value )
-    
+
     def act( self, value ):
-        #print ("Button act " + str(value))
-        #if value != 0:
-        #    value = 0 if self.value == 1 else 127
         super( NocturnButton, self).act( value )
-    
+
 class NocturnEncoder( NocturnController ):
     
     # The sensitivity. Would probably be weird to change it, since degrees of
     # rotation should equal degrees of lit LEDs, but go nuts!
     ACCELERATION_LOW = 2
-    ACCELERATION_HIGH = 3
+    #ACCELERATION_HIGH = 3
     ACCELERATION_LOW_TIME_MS = 65
-    ACCELERATION_HIGH_TIME_MS = 50
+    #ACCELERATION_HIGH_TIME_MS = 50
     DEBOUNCE_TIME_MS = 50
+    LED_TIME_MS = 500
 
     def __init__( self, surface, label ):
         self.last = 0
         self.last_time = 0
         self.direction = 1
+        #self.count = 0
         super( NocturnEncoder, self ).__init__( surface, label )
     
     def getLabel( self ):
@@ -351,13 +363,19 @@ class NocturnEncoder( NocturnController ):
         return( "Encoder " + str(self.label) )
     
     def act( self, value, absolute=False):
+        global hardware
+        global last_encoder_number
+        global last_encoder_value
+        global last_encoder_time_ms
+        global enc
         if not absolute:
             current_time_ms = int(round(time.time() * 1000))
             value = value if value < 64 else 0 - ( 128 - value )
             # Acceleration
-            if current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_HIGH_TIME_MS):
-                value *= NocturnEncoder.ACCELERATION_HIGH
-            elif current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_LOW_TIME_MS):
+            #if current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_HIGH_TIME_MS):
+            #    value *= NocturnEncoder.ACCELERATION_HIGH
+            #elif
+            if current_time_ms < (self.last_time + NocturnEncoder.ACCELERATION_LOW_TIME_MS):
                 value *= NocturnEncoder.ACCELERATION_LOW
             value = self.value + value
             value = 0 if value < 0 else value
@@ -370,6 +388,30 @@ class NocturnEncoder( NocturnController ):
                 self.last = value
                 self.last_time = current_time_ms
                 super( NocturnEncoder, self ).act( value )
+
+                # To avoid USB audio glitches I found it was necessary to not update the LED rings too often.
+                # Below are different attempts and their outcomes. The last one is the only solution I found that
+                # was somewhat sane from a UX perspective while avoiding glitches.
+
+                # Set LED on all encoder updates, no filtering. Causes glitches.
+                #hardware.setLEDRingValue( self.getNumber(), value )
+
+                # Filter LED updates by setting last value after timeout. No glitches, but delayed visual feedback.
+                #if current_time_ms - last_encoder_time_ms > NocturnEncoder.LED_TIME_MS:
+                #    hardware.setLEDRingValue( last_encoder_number, last_encoder_value )
+                #last_encoder_number = self.getNumber()
+                #last_encoder_value = value
+                #last_encoder_time_ms = current_time_ms
+
+                # Filter LED updates by count. Causes glitches.
+                #self.count += 1
+                #if self.count > 15 or value == 0 or value == 127:
+                #    self.count = 0
+                #    hardware.setLEDRingValue( self.getNumber(), value )
+
+                # Save latest enc value. LED updates are performed later (outside of encoder updating). No glitches.
+                enc[self.getNumber()] = value
+                last_encoder_time_ms = current_time_ms
         else:
                 super( NocturnEncoder, self ).act( value )
 
@@ -377,10 +419,8 @@ class NocturnSlider( NocturnController ):
     
     def __init__( self, surface, label ):
         super( NocturnSlider, self ).__init__( surface, label )
-    
-#    def set( self, value ):
-#        pass
-    
+
     def getLabel( self ):
         """Deprecated"""
         return( "Slider " + str(self.label) )
+

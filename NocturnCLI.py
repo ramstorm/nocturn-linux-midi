@@ -14,8 +14,6 @@ from optparse import OptionParser
 class CLINocturnModel( NocturnModel ):
     def notifyObservers( self ):
         self.update()
-        for obs in self.observers:
-            obs.notify()
 
 class PollThread( threading.Thread ):
     
@@ -35,14 +33,11 @@ class PollThread( threading.Thread ):
         
         while( not self._stop ):
             self.nocturn.poll()
-            midi = self.midder.recv()
-            if midi:
-                pub.sendMessage( 'MIDI_IN_MESSAGES', channel=midi[0],
-                        cc=midi[1], value=midi[2] )
-    
+            self.nocturn.led()
+
     def stop( self ):
         self._stop = True
-    
+
     def getNocturn( self ):
         return self.nocturn
 
